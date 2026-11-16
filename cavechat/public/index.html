@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1e1f22">
+  <title>CaveChat</title>
+  <style>
+    :root{color-scheme:dark;--bg:#1e1f22;--panel:#2b2d31;--panel2:#232428;--rail:#1a1b1e;--text:#f2f3f5;--muted:#949ba4;--faint:#6d727a;--accent:#5865f2;--line:#34363c;--green:#23a559;--red:#ed4245}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer;border:0;color:inherit}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #8ea1ff;outline-offset:2px}
+    .hidden{display:none!important}.authScreen{min-height:100vh;display:grid;grid-template-columns:minmax(260px,1fr) minmax(360px,470px);background:radial-gradient(ellipse at 20% 20%,#343b76 0,transparent 38%),radial-gradient(ellipse at 65% 85%,#202e53 0,transparent 36%),#17181b}
+    .authHero{display:flex;flex-direction:column;justify-content:space-between;padding:42px 5vw}.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px}.brandMark{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:var(--accent);font-size:22px;box-shadow:0 8px 26px #5865f255}.heroCopy{max-width:570px;margin:auto 0}.heroCopy h1{font-size:clamp(42px,6vw,76px);line-height:1.02;letter-spacing:-3px;margin:0 0 20px}.heroCopy p{color:#b7bdd0;font-size:18px;max-width:460px}.heroFoot{color:#7f8798;font-size:12px}.authPanelWrap{display:flex;align-items:center;justify-content:center;padding:28px;background:#202126dd;backdrop-filter:blur(18px);border-left:1px solid #ffffff0c}.authPanel{width:min(100%,390px)}.authPanel h2{font-size:26px;margin:0 0 5px}.authPanel .sub{color:var(--muted);margin:0 0 28px}.authTabs{display:grid;grid-template-columns:1fr 1fr;padding:4px;background:#17181b;border-radius:10px;margin-bottom:23px}.authTabs button{padding:10px;border-radius:7px;color:var(--muted);background:transparent;font-weight:650}.authTabs button.active{background:#383a42;color:white}.field{display:block;margin:15px 0}.field span{display:block;color:#c9cbd1;font-size:12px;font-weight:750;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px}.field input{width:100%;border:1px solid #3b3d45;background:#17181b;color:white;border-radius:8px;padding:13px 14px}.field input:focus{border-color:#8590ff;outline:none}.primary{width:100%;background:var(--accent);padding:13px;border-radius:8px;font-weight:750;margin-top:8px}.primary:hover{background:#4752c4}.formError{min-height:20px;color:#ff8588;font-size:13px;margin:10px 0}.smallNote{font-size:12px;color:var(--faint);text-align:center;margin-top:16px}
+    .app{height:100vh;min-height:520px;display:flex;overflow:hidden}.serverRail{width:72px;flex:0 0 72px;background:var(--rail);display:flex;align-items:center;flex-direction:column;gap:9px;padding:12px 0;overflow-y:auto}.railButton{width:46px;height:46px;border-radius:50%;background:#313338;color:#d7d9dc;display:grid;place-items:center;font-weight:750;font-size:17px;position:relative;transition:border-radius .15s,background .15s}.railButton:hover,.railButton.selected{border-radius:15px;background:var(--accent);color:white}.railButton.brandRail{background:var(--accent);color:white}.railButton.add{color:#23a559;font-size:26px}.railDivider{height:1px;width:30px;background:#393b42;flex:0 0 auto}.railButton .railTip{position:absolute;left:58px;white-space:nowrap;background:#111;color:#fff;padding:7px 10px;border-radius:6px;font-size:12px;opacity:0;pointer-events:none;z-index:20}.railButton:hover .railTip{opacity:1}
+    .channelSidebar{width:250px;flex:0 0 250px;background:#2b2d31;display:flex;flex-direction:column;border-right:1px solid #17181b}.communityTop{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #202125;box-shadow:0 1px 3px #0002;font-weight:750}.communityTop .mini{font-size:12px;color:var(--muted)}.sidebarScroll{overflow:auto;padding:14px 8px;flex:1}.sideLabel{display:flex;align-items:center;justify-content:space-between;padding:7px 8px 5px;color:#949ba4;font-size:11px;font-weight:800;letter-spacing:.5px}.sideLabel button{background:none;color:#aaa;font-size:19px;line-height:1}.channelItem{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:5px;color:#aeb3bb;cursor:pointer;margin:1px 0;font-size:14px}.channelItem:hover{background:#35373d;color:#e5e7eb}.channelItem.active{background:#404249;color:#fff}.hash{font-size:19px;color:#818792;line-height:15px}.voiceIcon{font-size:14px}.sidebarHint{padding:15px 10px;color:#858b95;font-size:12px}.userBar{height:58px;background:#232428;display:flex;align-items:center;gap:9px;padding:8px}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:#5965d9;color:#fff;font-weight:800;font-size:12px;text-transform:uppercase}.userDetails{min-width:0;flex:1}.userName{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.userStatus{font-size:11px;color:var(--muted)}.barAction{background:transparent;color:#b9bdc5;padding:7px;border-radius:5px}.barAction:hover{background:#35373d;color:white}
+    .chatArea{min-width:0;flex:1;display:flex;flex-direction:column;background:#313338}.chatHeader{height:56px;flex:0 0 56px;border-bottom:1px solid #26272c;display:flex;align-items:center;padding:0 17px;gap:10px;box-shadow:0 1px 3px #0002}.chatHeader .channelTitle{font-weight:750}.chatHeader .headerHash{font-size:23px;color:#9ca2ad}.headerSpacer{flex:1}.headerBtn{background:transparent;color:#b6bac2;padding:8px;border-radius:5px;font-size:13px}.headerBtn:hover{background:#404249;color:#fff}.connectionDot{width:7px;height:7px;border-radius:50%;background:#ed4245;display:inline-block;margin-right:5px}.connectionDot.online{background:#23a559}
+    .messages{flex:1;overflow:auto;padding:24px 20px 16px;display:flex;flex-direction:column;gap:18px}.welcome{margin:auto auto 25px;width:min(100%,700px);align-self:center}.welcomeIcon{width:66px;height:66px;border-radius:22px;display:grid;place-items:center;background:#42455a;font-size:32px;margin-bottom:17px}.welcome h2{font-size:30px;margin:0 0 4px}.welcome p{margin:0;color:#aeb3bc}.message{display:flex;gap:13px;max-width:100%;}.message .avatar{width:40px;height:40px;font-size:13px}.messageBody{min-width:0;flex:1}.messageMeta{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:2px}.messageAuthor{font-weight:700;color:#e4e6eb}.messageTime{font-size:11px;color:#858b95}.messageText{white-space:pre-wrap;overflow-wrap:anywhere;color:#dbdee3;font-size:14px}.emptyChat{color:#8d939d;text-align:center;margin:auto}.composerWrap{padding:0 16px 22px}.composer{display:flex;align-items:flex-end;gap:10px;background:#383a40;border-radius:9px;padding:10px 14px;min-height:50px}.composer textarea{resize:none;max-height:150px;min-height:24px;flex:1;background:transparent;border:0;outline:0;color:#f2f3f5;padding:3px 0}.composer textarea::placeholder{color:#9298a2}.sendBtn{width:30px;height:30px;border-radius:7px;background:var(--accent);font-weight:800}.sendBtn:disabled{opacity:.35;cursor:not-allowed}.composerHint{display:flex;justify-content:space-between;padding:7px 4px 0;color:#858b95;font-size:11px}.membersPanel{width:230px;flex:0 0 230px;background:#2b2d31;border-left:1px solid #25262a;padding:18px 10px;overflow:auto}.membersHeading{font-size:11px;font-weight:800;color:#969ca6;letter-spacing:.5px;padding:4px 8px 12px}.memberItem{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:5px;color:#c8cbd1}.memberItem .avatar{width:30px;height:30px;font-size:11px}.memberItem small{display:block;color:#8a909a;font-size:10px}.memberItem .presence{width:8px;height:8px;border-radius:50%;background:#747b85;margin-left:auto}.memberItem .presence.online{background:#23a559}
+    .modalBack{position:fixed;inset:0;background:#0009;display:grid;place-items:center;padding:18px;z-index:50}.modal{width:min(100%,430px);background:#313338;border-radius:12px;box-shadow:0 18px 70px #0008;overflow:hidden}.modalHead{padding:20px 22px 8px}.modalHead h3{font-size:21px;margin:0}.modalHead p{color:#aeb3bc;font-size:13px;margin:6px 0 0}.modalBody{padding:12px 22px 20px}.modalActions{display:flex;justify-content:flex-end;gap:9px;padding:0 22px 20px}.modalActions button{padding:10px 14px;border-radius:7px;background:#45474f}.modalActions .primarySmall{background:var(--accent);font-weight:700}.modal .field{margin:8px 0 14px}.modal .field input{background:#1e1f22}.modalError{color:#ff8588;font-size:12px;min-height:16px}.modalTabs{display:flex;gap:8px;margin:8px 0 15px}.modalTabs button{flex:1;padding:9px;background:#25262b;color:#afb4bc;border-radius:7px}.modalTabs button.active{background:#4953c8;color:#fff}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#111318;border:1px solid #454852;color:#fff;padding:10px 15px;border-radius:8px;box-shadow:0 8px 30px #0008;z-index:80;font-size:13px}
+    @media(max-width:850px){.membersPanel{display:none!important}.authScreen{grid-template-columns:1fr}.authHero{display:none}.authPanelWrap{border:0;background:transparent}.channelSidebar{width:215px;flex-basis:215px}}
+    @media(max-width:560px){.serverRail{width:58px;flex-basis:58px}.railButton{width:40px;height:40px}.channelSidebar{width:190px;flex-basis:190px}.chatHeader{padding:0 10px}.messages{padding:17px 12px}.composerWrap{padding:0 9px 12px}.headerBtn.inviteBtn{display:none}.authPanelWrap{padding:22px}.message .avatar{width:34px;height:34px}}
+    @media(max-width:390px){.channelSidebar{width:165px;flex-basis:165px}.userBar{gap:5px}.barAction{padding:5px}}
+  </style>
+</head>
+<body>
+  <section id="authScreen" class="authScreen">
+    <div class="authHero">
+      <div class="brand"><div class="brandMark">C</div><span>CaveChat</span></div>
+      <div class="heroCopy">
+        <h1>Your people.<br>Your place.</h1>
+        <p>Make a community, pull your friends in, and keep the conversation going.</p>
+      </div>
+      <div class="heroFoot">CaveChat · A place to hang out</div>
+    </div>
+    <div class="authPanelWrap">
+      <div class="authPanel">
+        <div class="brand" style="margin-bottom:28px"><div class="brandMark">C</div><span>CaveChat</span></div>
+        <h2 id="authTitle">Welcome back!</h2>
+        <p class="sub" id="authSubtitle">We're glad to see you again.</p>
+        <div class="authTabs">
+          <button id="loginTab" class="active" type="button">Log in</button>
+          <button id="registerTab" type="button">Create account</button>
+        </div>
+        <form id="authForm">
+          <label class="field hidden" id="usernameField"><span>Username</span><input id="usernameInput" autocomplete="username" maxlength="24" placeholder="Your username"></label>
+          <label class="field" id="identityField"><span>Email or username</span><input id="identityInput" autocomplete="username" required placeholder="you@example.com"></label>
+          <label class="field hidden" id="emailField"><span>Email</span><input id="emailInput" type="email" autocomplete="email" maxlength="255" placeholder="you@example.com"></label>
+          <label class="field"><span>Password</span><input id="passwordInput" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters"></label>
+          <div class="formError" id="authError" role="alert"></div>
+          <button class="primary" id="authSubmit" type="submit">Log in</button>
+        </form>
+        <div class="smallNote">By continuing, you agree to be decent to each other. ✦</div>
+      </div>
+    </div>
+  </section>
+
+  <main id="app" class="app hidden">
+    <nav class="serverRail" id="serverRail" aria-label="Communities"></nav>
+    <aside class="channelSidebar">
+      <div class="communityTop"><div id="communityName">Your communities</div><button class="barAction" id="inviteCommunityBtn" title="Invite people">＋</button></div>
+      <div class="sidebarScroll" id="channelList">
+        <div class="sidebarHint">Create a community or join one with an invite code to get started.</div>
+      </div>
+      <div class="userBar">
+        <div class="avatar" id="selfAvatar">U</div>
+        <div class="userDetails"><div class="userName" id="selfName">User</div><div class="userStatus"><span class="connectionDot" id="connectionDot"></span><span id="connectionText">Connecting</span></div></div>
+        <button class="barAction" id="logoutBtn" title="Log out" aria-label="Log out">↪</button>
+      </div>
+    </aside>
+    <section class="chatArea">
+      <header class="chatHeader">
+        <span class="headerHash" id="headerSymbol">#</span><span class="channelTitle" id="headerTitle">welcome</span>
+        <span class="headerSpacer"></span>
+        <button class="headerBtn inviteBtn" id="inviteBtn">＋ Invite</button>
+        <button class="headerBtn" id="membersBtn">☷ Members</button>
+      </header>
+      <div class="messages" id="messages">
+        <div class="welcome"><div class="welcomeIcon">✦</div><h2>Welcome to CaveChat</h2><p>Your conversations will show up here. Start by creating a community or joining one.</p></div>
+      </div>
+      <div class="composerWrap">
+        <form class="composer" id="messageForm">
+          <textarea id="messageInput" rows="1" maxlength="2000" placeholder="Select a text channel to start chatting" disabled></textarea>
+          <button class="sendBtn" id="sendBtn" type="submit" disabled aria-label="Send message">➤</button>
+        </form>
+        <div class="composerHint"><span>Keep it friendly. You can send up to 2,000 characters.</span><span>ENTER to send · SHIFT + ENTER for new line</span></div>
+      </div>
+    </section>
+    <aside class="membersPanel hidden" id="membersPanel"><div class="membersHeading">MEMBERS</div><div id="memberList"></div></aside>
+  </main>
+
+  <div id="modalBack" class="modalBack hidden">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modalHead"><h3 id="modalTitle">Create or join a community</h3><p id="modalDescription">Build a place for your people.</p></div>
+      <div class="modalBody" id="modalBody"></div>
+      <div class="modalActions"><button id="modalCancel" type="button">Cancel</button><button id="modalSubmit" class="primarySmall" type="button">Continue</button></div>
+    </section>
+  </div>
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    const state = { mode:"login", user:null, communities:[], activeCommunity:null, channels:[], activeChannel:null, socket:null, members:[], modalMode:"community", modalTab:"create", toastTimer:null };
+    const escapeInitials = (name) => (name || "?").trim().slice(0,2).toUpperCase();
+    const colorFor = (text) => {
+      let h = 0; for (const ch of String(text || "")) h = (h * 31 + ch.charCodeAt(0)) % 360;
+      return `hsl(${h} 48% 43%)`;
+    };
+    const el = (tag, cls, text) => { const node = document.createElement(tag); if (cls) node.className = cls; if (text !== undefined) node.textContent = text; return node; };
+    function avatar(name, sizeClass="avatar") {
+      const node = el("div", sizeClass, escapeInitials(name));
+      node.style.background = colorFor(name);
+      return node;
+    }
+    function toast(message) {
+      $("toast").textContent = message;
+      $("toast").classList.remove("hidden");
+      clearTimeout(state.toastTimer);
+      state.toastTimer = setTimeout(() => $("toast").classList.add("hidden"), 2800);
+    }
+    async function api(url, options={}) {
+      const opts = { credentials:"same-origin", ...options, headers:{ ...(options.body ? {"Content-Type":"application/json"} : {}), ...(options.headers || {}) } };
+      const response = await fetch(url, opts);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+      return data;
+    }
+    function setMode(mode) {
+      state.mode = mode;
+      const registering = mode === "register";
+      $("loginTab").classList.toggle("active", !registering);
+      $("registerTab").classList.toggle("active", registering);
+      $("authTitle").textContent = registering ? "Create your account" : "Welcome back!";
+      $("authSubtitle").textContent = registering ? "Your corner of the internet starts here." : "We're glad to see you again.";
+      $("usernameField").classList.toggle("hidden", !registering);
+      $("emailField").classList.toggle("hidden", !registering);
+      $("identityField").classList.toggle("hidden", registering);
+      $("identityInput").required = !registering;
+      $("emailInput").required = registering;
+      $("usernameInput").required = registering;
+      $("authSubmit").textContent = registering ? "Create account" : "Log in";
+      $("authError").textContent = "";
+      $("passwordInput").autocomplete = registering ? "new-password" : "current-password";
+    }
+    $("loginTab").addEventListener("click", () => setMode("login"));
+    $("registerTab").addEventListener("click", () => setMode("register"));
+
+    $("authForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const button = $("authSubmit");
+      button.disabled = true;
+      $("authError").textContent = "";
+      try {
+        let data;
+        if (state.mode === "register") {
+          data = await api("/api/auth/register", { method:"POST", body:JSON.stringify({
+            username:$("usernameInput").value, email:$("emailInput").value, password:$("passwordInput").value
+          }) });
+        } else {
+          data = await api("/api/auth/login", { method:"POST", body:JSON.stringify({
+            identity:$("identityInput").value, password:$("passwordInput").value
+          }) });
+        }
+        await enterApp(data.user);
+      } catch (err) {
+        $("authError").textContent = err.message;
+      } finally { button.disabled = false; }
+    });
+
+    async function checkSession() {
+      try {
+        const data = await api("/api/me");
+        await enterApp(data.user);
+      } catch {
+        $("authScreen").classList.remove("hidden");
+      }
+    }
+
+    async function enterApp(user) {
+      state.user = user;
+      $("authScreen").classList.add("hidden");
+      $("app").classList.remove("hidden");
+      $("selfName").textContent = user.username;
+      $("selfAvatar").textContent = escapeInitials(user.username);
+      $("selfAvatar").style.background = colorFor(user.username);
+      connectSocket();
+      await loadCommunities();
+    }
+
+    function connectSocket() {
+      if (state.socket) state.socket.disconnect();
+      state.socket = io({ withCredentials:true });
+      state.socket.on("connect", () => {
+        $("connectionDot").classList.add("online");
+        $("connectionText").textContent = "Online";
+        if (state.activeChannel) state.socket.emit("channel:join", state.activeChannel.id);
+      });
+      state.socket.on("disconnect", () => {
+        $("connectionDot").classList.remove("online");
+        $("connectionText").textContent = "Reconnecting";
+      });
+      state.socket.on("connect_error", () => {
+        $("connectionDot").classList.remove("online");
+        $("connectionText").textContent = "Offline";
+      });
+      state.socket.on("chat:message", (message) => {
+        if (message.channelId !== state.activeChannel?.id) return;
+        appendMessage(message);
+        scrollMessages();
+      });
+      state.socket.on("presence:update", () => {
+        if (state.activeCommunity) loadMembers().catch(() => {});
+      });
+    }
+
+    async function loadCommunities() {
+      const data = await api("/api/communities");
+      state.communities = data.communities;
+      renderRail();
+      if (!state.communities.length) {
+        state.activeCommunity = null; state.channels = []; state.activeChannel = null;
+        renderSidebar(); renderWelcome(); setComposerEnabled(false);
+        $("communityName").textContent = "Your communities";
+        $("inviteBtn").disabled = true;
+        return;
+      }
+      const stillThere = state.communities.find(c => c.id === state.activeCommunity?.id);
+      await selectCommunity((stillThere || state.communities[0]).id);
+    }
+
+    function renderRail() {
+      const rail = $("serverRail");
+      rail.replaceChildren();
+      const home = el("button", "railButton brandRail", "C");
+      home.title = "CaveChat"; home.addEventListener("click", () => { state.activeCommunity = null; state.activeChannel = null; renderRail(); renderSidebar(); renderWelcome(); setComposerEnabled(false); $("communityName").textContent = "Your communities"; });
+      rail.append(home, el("div", "railDivider"));
+      state.communities.forEach((community) => {
+        const button = el("button", `railButton${state.activeCommunity?.id === community.id ? " selected" : ""}`, escapeInitials(community.name));
+        button.title = community.name;
+        button.style.background = state.activeCommunity?.id === community.id ? "var(--accent)" : colorFor(community.name);
+        button.addEventListener("click", () => selectCommunity(community.id));
+        rail.append(button);
+      });
+      rail.append(el("div", "railDivider"));
+      const add = el("button", "railButton add", "+");
+      add.title = "Create or join a community"; add.addEventListener("click", openCommunityModal); rail.append(add);
+    }
+
+    async function selectCommunity(id) {
+      const community = state.communities.find(c => c.id === id);
+      if (!community) return;
+      if (state.activeChannel && state.socket?.connected) state.socket.emit("channel:leave", state.activeChannel.id);
+      state.activeCommunity = community; state.activeChannel = null;
+      $("communityName").textContent = community.name;
+      renderRail();
+      const [channelsData] = await Promise.all([
+        api(`/api/communities/${community.id}/channels`),
+        loadMembers()
+      ]);
+      state.channels = channelsData.channels;
+      renderSidebar();
+      const firstText = state.channels.find(c => c.type === "text");
+      if (firstText) await selectChannel(firstText.id);
+      else { renderWelcome("No text channels yet", "Create a text channel to start the conversation."); setComposerEnabled(false); }
+      $("inviteBtn").disabled = false;
+    }
+
+    async function loadMembers() {
+      if (!state.activeCommunity) { state.members = []; renderMembers(); return; }
+      const data = await api(`/api/communities/${state.activeCommunity.id}/members`);
+      state.members = data.members;
+      renderMembers();
+    }
+
+    function renderMembers() {
+      const list = $("memberList"); list.replaceChildren();
+      const online = state.members.filter(m => m.online);
+      const offline = state.members.filter(m => !m.online);
+      for (const [label, group] of [["ONLINE", online], ["OFFLINE", offline]]) {
+        if (!group.length) continue;
+        list.append(el("div", "membersHeading", `${label} — ${group.length}`));
+        group.forEach(member => {
+          const row = el("div", "memberItem");
+          row.append(avatar(member.username));
+          const info = el("div", "", member.username);
+          const role = el("small", "", member.role === "owner" ? "Community owner" : member.role);
+          info.append(role);
+          const dot = el("span", `presence${member.online ? " online" : ""}`);
+          row.append(info, dot); list.append(row);
+        });
+      }
+      if (!state.members.length) list.append(el("div", "sidebarHint", "No members yet."));
+    }
+
+    function renderSidebar() {
+      const list = $("channelList"); list.replaceChildren();
+      if (!state.activeCommunity) {
+        list.append(el("div", "sidebarHint", "Create a community or join one with an invite code to get started."));
+        return;
+      }
+      const textLabel = el("div", "sideLabel", "TEXT CHANNELS");
+      const addText = el("button", "", "+"); addText.title = "Create text channel"; addText.addEventListener("click", () => openChannelModal("text"));
+      textLabel.append(addText); list.append(textLabel);
+      const textChannels = state.channels.filter(c => c.type === "text");
+      textChannels.forEach(channel => list.append(channelButton(channel)));
+      if (!textChannels.length) list.append(el("div", "sidebarHint", "No text channels yet."));
+      const voiceLabel = el("div", "sideLabel", "VOICE CHANNELS");
+      const addVoice = el("button", "", "+"); addVoice.title = "Create voice channel"; addVoice.addEventListener("click", () => openChannelModal("voice"));
+      voiceLabel.append(addVoice); list.append(voiceLabel);
+      const voiceChannels = state.channels.filter(c => c.type === "voice");
+      voiceChannels.forEach(channel => list.append(channelButton(channel)));
+      if (!voiceChannels.length) list.append(el("div", "sidebarHint", "No voice channels yet. Voice chat isn't wired up yet."));
+    }
+
+    function channelButton(channel) {
+      const row = el("div", `channelItem${state.activeChannel?.id === channel.id ? " active" : ""}`);
+      row.append(el("span", channel.type === "text" ? "hash" : "voiceIcon", channel.type === "text" ? "#" : "◖"));
+      row.append(el("span", "", channel.name));
+      row.addEventListener("click", () => {
+        if (channel.type === "voice") { toast("Voice chat is not wired up yet."); return; }
+        selectChannel(channel.id);
+      });
+      return row;
+    }
+
+    async function selectChannel(id) {
+      const channel = state.channels.find(c => c.id === id);
+      if (!channel || channel.type !== "text") return;
+      if (state.activeChannel && state.socket?.connected) state.socket.emit("channel:leave", state.activeChannel.id);
+      state.activeChannel = channel;
+      renderSidebar();
+      $("headerSymbol").textContent = "#";
+      $("headerTitle").textContent = channel.name;
+      $("inviteBtn").disabled = false;
+      setComposerEnabled(true);
+      $("messageInput").placeholder = `Message #${channel.name}`;
+      $("messages").replaceChildren(el("div", "emptyChat", "Loading messages…"));
+      try {
+        const data = await api(`/api/channels/${channel.id}/messages`);
+        renderMessages(data.messages);
+        if (state.socket?.connected) state.socket.emit("channel:join", channel.id);
+      } catch (err) { toast(err.message); }
+    }
+
+    function renderWelcome(title="Welcome to CaveChat", subtitle="Your conversations will show up here. Start by creating a community or joining one.") {
+      const wrap = el("div", "welcome");
+      wrap.append(el("div", "welcomeIcon", "✦"), el("h2", "", title), el("p", "", subtitle));
+      $("messages").replaceChildren(wrap);
+      $("headerSymbol").textContent = "✦";
+      $("headerTitle").textContent = state.activeCommunity ? state.activeCommunity.name : "CaveChat";
+    }
+
+    function renderMessages(messages) {
+      const list = $("messages"); list.replaceChildren();
+      if (!messages.length) {
+        const wrap = el("div", "welcome");
+        wrap.append(el("div", "welcomeIcon", "#"), el("h2", "", `Welcome to #${state.activeChannel.name}`), el("p", "", "This is the beginning of this channel. Send the first message."));
+        list.append(wrap); return;
+      }
+      messages.forEach(appendMessage);
+      scrollMessages();
+    }
+
+    function appendMessage(message) {
+      const list = $("messages");
+      const row = el("article", "message");
+      const name = message.user?.username || "Unknown";
+      row.append(avatar(name));
+      const body = el("div", "messageBody");
+      const meta = el("div", "messageMeta");
+      meta.append(el("span", "messageAuthor", name));
+      const time = new Date(message.createdAt);
+      meta.append(el("span", "messageTime", Number.isNaN(time.getTime()) ? "" : time.toLocaleString([], {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"})));
+      body.append(meta, el("div", "messageText", message.content));
+      row.append(body); list.append(row);
+    }
+    function scrollMessages() { $("messages").scrollTop = $("messages").scrollHeight; }
+    function setComposerEnabled(enabled) { $("messageInput").disabled = !enabled; $("sendBtn").disabled = !enabled; }
+
+    $("messageForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const content = $("messageInput").value.trim();
+      if (!content || !state.activeChannel || !state.socket?.connected) return;
+      $("sendBtn").disabled = true;
+      state.socket.emit("chat:send", { channelId:state.activeChannel.id, content }, (result) => {
+        $("sendBtn").disabled = false;
+        if (!result?.ok) return toast(result?.error || "Message could not be sent.");
+        $("messageInput").value = "";
+        $("messageInput").style.height = "auto";
+      });
+    });
+    $("messageInput").addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault(); $("messageForm").requestSubmit();
+      }
+    });
+    $("messageInput").addEventListener("input", () => {
+      $("messageInput").style.height = "auto";
+      $("messageInput").style.height = `${Math.min($("messageInput").scrollHeight, 150)}px`;
+    });
+
+    function openCommunityModal() {
+      state.modalMode = "community"; state.modalTab = "create";
+      $("modalTitle").textContent = "Create or join a community";
+      $("modalDescription").textContent = "Build a place for your people, or join with an invite code.";
+      $("modalBody").innerHTML = `
+        <div class="modalTabs"><button type="button" data-tab="create" class="active">Create</button><button type="button" data-tab="join">Join</button></div>
+        <div id="createCommunityPane"><label class="field"><span>Community name</span><input id="communityNameInput" maxlength="80" placeholder="The cool people club"></label></div>
+        <div id="joinCommunityPane" class="hidden"><label class="field"><span>Invite code</span><input id="inviteCodeInput" maxlength="32" placeholder="Paste an invite code"></label></div>
+        <div id="modalError" class="modalError"></div>`;
+      $("modalBody").querySelectorAll("[data-tab]").forEach(button => button.addEventListener("click", () => {
+        state.modalTab = button.dataset.tab;
+        $("modalBody").querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("active", b === button));
+        $("createCommunityPane").classList.toggle("hidden", state.modalTab !== "create");
+        $("joinCommunityPane").classList.toggle("hidden", state.modalTab !== "join");
+        $("modalSubmit").textContent = state.modalTab === "create" ? "Create community" : "Join community";
+        $("modalError").textContent = "";
+      }));
+      $("modalSubmit").textContent = "Create community";
+      showModal();
+    }
+
+    function openChannelModal(type) {
+      state.modalMode = "channel";
+      $("modalTitle").textContent = `Create a ${type} channel`;
+      $("modalDescription").textContent = `Add a new ${type} channel to ${state.activeCommunity.name}.`;
+      $("modalBody").innerHTML = `<label class="field"><span>Channel name</span><input id="channelNameInput" maxlength="80" placeholder="${type === "text" ? "new-chat" : "hangout"}"></label><div class="modalError" id="modalError"></div>`;
+      $("modalSubmit").textContent = "Create channel";
+      $("modalSubmit").dataset.type = type;
+      showModal();
+    }
+
+    function showModal() { $("modalBack").classList.remove("hidden"); setTimeout(() => $("modalBody").querySelector("input")?.focus(), 30); }
+    function closeModal() { $("modalBack").classList.add("hidden"); $("modalSubmit").dataset.type = ""; }
+    $("modalCancel").addEventListener("click", closeModal);
+    $("modalBack").addEventListener("click", (event) => { if (event.target === $("modalBack")) closeModal(); });
+
+    $("modalSubmit").addEventListener("click", async () => {
+      const button = $("modalSubmit"); button.disabled = true;
+      const error = $("modalError");
+      if (error) error.textContent = "";
+      try {
+        if (state.modalMode === "community" && state.modalTab === "create") {
+          await api("/api/communities", { method:"POST", body:JSON.stringify({name:$("communityNameInput").value}) });
+          closeModal(); await loadCommunities(); toast("Community created!");
+        } else if (state.modalMode === "community") {
+          const code = $("inviteCodeInput").value.trim();
+          await api(`/api/join/${encodeURIComponent(code)}`, { method:"POST" });
+          closeModal(); await loadCommunities(); toast("You joined the community!");
+        } else if (state.modalMode === "channel") {
+          const channelType = button.dataset.type;
+          await api(`/api/communities/${state.activeCommunity.id}/channels`, { method:"POST", body:JSON.stringify({name:$("channelNameInput").value, type:channelType}) });
+          closeModal();
+          const result = await api(`/api/communities/${state.activeCommunity.id}/channels`);
+          state.channels = result.channels; renderSidebar();
+          const newest = [...state.channels].reverse().find(c => c.type === channelType);
+          if (newest?.type === "text") await selectChannel(newest.id);
+          toast("Channel created!");
+        }
+      } catch (err) {
+        if (error) error.textContent = err.message;
+        else toast(err.message);
+      } finally { button.disabled = false; }
+    });
+
+    async function getInviteCode() {
+      if (!state.activeCommunity) return;
+      try {
+        const data = await api(`/api/communities/${state.activeCommunity.id}/invite`, {method:"POST"});
+        await navigator.clipboard.writeText(data.inviteCode);
+        toast(`Invite code copied: ${data.inviteCode}`);
+      } catch (err) { toast(err.message || "Couldn't copy invite code."); }
+    }
+    $("inviteBtn").addEventListener("click", getInviteCode);
+    $("inviteCommunityBtn").addEventListener("click", openCommunityModal);
+    $("membersBtn").addEventListener("click", () => $("membersPanel").classList.toggle("hidden"));
+    $("logoutBtn").addEventListener("click", async () => {
+      try { await api("/api/auth/logout", {method:"POST"}); } catch {}
+      state.socket?.disconnect(); state.user = null; state.activeCommunity = null; state.activeChannel = null;
+      $("app").classList.add("hidden"); $("authScreen").classList.remove("hidden"); $("passwordInput").value = "";
+      setMode("login");
+    });
+
+    setMode("login");
+    checkSession().catch((err) => { $("authScreen").classList.remove("hidden"); $("authError").textContent = err.message; });
+  })();
+  </script>
+</body>
+</html>
